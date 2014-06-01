@@ -4,8 +4,8 @@ Leap Designer
 - Hacking around the Leap Motion V2 driver.
 - Produce a Design tool inspired by [Elon Musk](https://www.youtube.com/watch?v=xNqs_S-zEBY)
 
-Right now, this is a very basic prototype that allows you to move around cubes
-in a 3D world.
+Right now, this is a very basic prototype that allows you to move cubes around
+in a 3D world. An article about it should be up on my [blog](http://blog.lsenta.io/post/leap-designer/).
 
 
 Usage
