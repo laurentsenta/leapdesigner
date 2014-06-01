@@ -36,7 +36,7 @@ define(function () {
                 var block = world.getBlockAt(position, 5);
 
                 if (block) {
-                    block.material.color.setHex(0x42c94f);
+                    block.setPinched(true);
                     data[source_id].pinched = block;
                 }
             }
@@ -58,8 +58,22 @@ define(function () {
                 var block = data[source_id].pinched;
 
                 if (block) {
-                    block.material.color.setHex(0x535474);
+                    block.setPinched(false);
                     data[source_id].pinched = undefined;
+                }
+            }
+            // Change the color of "active" blocks
+            if (event.name == "move") {
+                if (data[source_id].active != undefined) {
+                    data[source_id].active.setActive(false);
+                }
+
+                var position = event.details.position;
+                var block = world.getBlockAt(position, 5);
+
+                if (block) {
+                    block.setActive(true);
+                    data[source_id].active = block;
                 }
             }
         }

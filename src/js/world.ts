@@ -9,7 +9,7 @@
  * define all the materials and geometry every time.
  */
 export class Block {
-    public material:THREE.Material;
+    public material:THREE.MeshBasicMaterial;
     public geometry:THREE.Geometry;
     public mesh:THREE.Mesh;
 
@@ -24,6 +24,24 @@ export class Block {
 
     public distanceTo(position:THREE.Vector3) {
         return this.mesh.position.distanceTo(position);
+    }
+
+    public setPinched(value:boolean) {
+        if (value) {
+            this.material.color.setHex(0x42c94f);
+        }
+        else {
+            this.material.color.setHex(0x535474);
+        }
+    }
+
+    public setActive(value:boolean) {
+        if (value) {
+            this.material.color.setHex(0x9992B6);
+        }
+        else {
+            this.material.color.setHex(0x535474);
+        }
     }
 }
 

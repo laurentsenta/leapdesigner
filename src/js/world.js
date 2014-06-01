@@ -20,6 +20,22 @@ define(["require", "exports"], function(require, exports) {
         Block.prototype.distanceTo = function (position) {
             return this.mesh.position.distanceTo(position);
         };
+
+        Block.prototype.setPinched = function (value) {
+            if (value) {
+                this.material.color.setHex(0x42c94f);
+            } else {
+                this.material.color.setHex(0x535474);
+            }
+        };
+
+        Block.prototype.setActive = function (value) {
+            if (value) {
+                this.material.color.setHex(0x9992B6);
+            } else {
+                this.material.color.setHex(0x535474);
+            }
+        };
         return Block;
     })();
     exports.Block = Block;

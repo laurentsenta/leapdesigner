@@ -70,12 +70,20 @@ define(function () {
                         hand));
                 }
             }
-            else if (data[id].pinched) {
-                callback(event_builder("unpinch",
-                    {"strengh": pinchStrength,
-                        "position": hand_to_three(hand, hand.thumb.tipPosition)},
-                    hand));
-                data[id].pinched = false;
+            else {
+                if (data[id].pinched) {
+                    callback(event_builder("unpinch",
+                        {"strengh": pinchStrength,
+                            "position": hand_to_three(hand, hand.thumb.tipPosition)},
+                        hand));
+                    data[id].pinched = false;
+                }
+                else {
+                    callback(event_builder("move",
+                        {"position": hand_to_three(hand, hand.thumb.tipPosition)},
+                        hand));
+                    data[id].pinched = false;
+                }
             }
         }
     };
