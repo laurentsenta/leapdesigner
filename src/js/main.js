@@ -66,8 +66,12 @@ define(function (require) {
 
         CONTEXT.world = new world.World(scene);
 
-        CONTEXT.world.addBlock(0, 0, 0);
         CONTEXT.world.addBlock(-2, -2, -2);
+        CONTEXT.world.addBlock(0, 0, 0);
+
+        for (var i = 0; i < 20; i++) {
+            CONTEXT.world.addBlock(Math.random() * 30 - 15, Math.random() * 30 - 15, Math.random() * 30 - 15);
+        }
     }
 
     init();

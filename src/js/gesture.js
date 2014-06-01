@@ -20,6 +20,13 @@ define(function () {
                     callback(event_builder("pinch", pinchStrength, hand));
                     data[id].pinched = true;
                 }
+                else {
+                    var handMesh = hand.data('riggedHand.mesh');
+                    var thumbPosition = new THREE.Vector3(0, 0, 0);
+                    handMesh.scenePosition(hand.thumb.tipPosition, thumbPosition);
+
+                    callback(event_builder("pinch_move", thumbPosition, hand));
+                }
             }
             else if (data[id].pinched) {
                 callback(event_builder("unpinch", pinchStrength, hand));
