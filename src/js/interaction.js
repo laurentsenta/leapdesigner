@@ -24,11 +24,8 @@ define(function () {
                     return;
                 }
 
-                var handMesh = source.data('riggedHand.mesh');
-                var thumbPosition = new THREE.Vector3(0, 0, 0);
-                handMesh.scenePosition(source.thumb.tipPosition, thumbPosition);
-
-                var block = world.getBlockAt(thumbPosition, 5);
+                var position = event.details.position;
+                var block = world.getBlockAt(position, 5);
 
                 if (block) {
                     block.material.color.setHex(0xEE00EE);
@@ -40,22 +37,15 @@ define(function () {
                     return;
                 }
 
-                var handMesh = source.data('riggedHand.mesh');
-                var thumbPosition = new THREE.Vector3(0, 0, 0);
-                handMesh.scenePosition(source.thumb.tipPosition, thumbPosition);
-
-                data[source_id].pinched.mesh.position = thumbPosition;
+                var position = event.details.position;
+                data[source_id].pinched.mesh.position = position;
             }
             if (event.name == "unpinch") {
                 if (data[source_id].pinched == undefined) {
                     return;
                 }
 
-                var handMesh = source.data('riggedHand.mesh');
-                var thumbPosition = new THREE.Vector3(0, 0, 0);
-                handMesh.scenePosition(source.thumb.tipPosition, thumbPosition);
-
-                var block = data[source_id].pinched; //world.getBlockAt(thumbPosition, 5);
+                var block = data[source_id].pinched;
 
                 if (block) {
                     block.material.color.setHex(0x6600EE);
