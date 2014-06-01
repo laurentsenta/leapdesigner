@@ -1,9 +1,16 @@
 /// <reference path="lib/three.d.ts" />
 /// <reference path="lib/underscore.d.ts" />
+/**
+* Describe a Three.js 3D World
+*/
 define(["require", "exports"], function(require, exports) {
+    /**
+    * A simple Three.JS block,
+    * define all the materials and geometry every time.
+    */
     var Block = (function () {
         function Block(x, y, z, width, height, depth) {
-            this.material = new THREE.MeshBasicMaterial({ color: 0x6600EE });
+            this.material = new THREE.MeshBasicMaterial({ color: 0x535474 });
             this.geometry = new THREE.BoxGeometry(width, height, depth);
             this.mesh = new THREE.Mesh(this.geometry, this.material);
             this.mesh.position = new THREE.Vector3(x, y, z);
@@ -17,6 +24,10 @@ define(["require", "exports"], function(require, exports) {
     })();
     exports.Block = Block;
 
+    /**
+    * Basic world containers,
+    * Register and search for items in the 3D world.
+    */
     var World = (function () {
         function World(scene) {
             this.scene = scene;

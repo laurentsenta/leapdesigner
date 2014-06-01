@@ -1,23 +1,25 @@
 define(function (require) {
-
     var Gesture = require('./gesture');
     var Interaction = require('./interaction');
+    var World = require('./world');
 
+    // Good ol' global variable that contains the project info
     CONTEXT = {};
     CONTEXT.screen = document.getElementById('leap-designer');
     CONTEXT.width = 800;
     CONTEXT.height = 600;
 
-    var world = require('./world');
-
-    var cube;
-    var attached = true;
-
-    // INIT CONTEXT
+    /**
+     * Init the Context,
+     * - Setup Three.JS
+     * - The project "Engines" (interactions engine, etc).
+     * - Feed the initial world with some lights and cubes.
+     */
     function init() {
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(45, CONTEXT.width / CONTEXT.height, 1, 1000);
-        var renderer = new THREE.WebGLRenderer();
+        var renderer = new THREE.WebGLRenderer({alpha: true});
+        var screen = CONTEXT.screen;
 
         camera.position.fromArray([0, 6, 30]);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -27,36 +29,32 @@ define(function (require) {
         renderer.setClearColor(0x000000, 0);
         renderer.setSize(CONTEXT.width, CONTEXT.height);
 
-        CONTEXT.screen.appendChild(renderer.domElement);
-        renderer.render(scene, camera);
-
-        CONTEXT.camera = camera;
-        CONTEXT.scene = scene;
-        CONTEXT.renderer = renderer;
-
-        // Create context with lights, etc
-        camera.position.set(-8, 8, 20);
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
-
         renderer.shadowMapEnabled = true;
 
+        screen.appendChild(renderer.domElement);
+        renderer.render(scene, camera);
+
+        // Create lights & shadws.
         light = new THREE.DirectionalLight(0xffffff, 1);
         light.position.set(0, 500, 0);
         light.castShadow = true;
-        light.shadowMapWidth = 2048;
-        light.shadowMapHeight = 2048;
-        var d = 200;
+        light.shadowMapWidth = 1024;
+        light.shadowMapHeight = 1024;
+
+        // Magic values to optimize the shadow map
+        var d = 50;
         light.shadowCameraLeft = -d;
         light.shadowCameraRight = d;
-        light.shadowCameraTop = d * 2;
-        light.shadowCameraBottom = -d * 2;
+        light.shadowCameraTop = d;
+        light.shadowCameraBottom = -d;
 
         light.shadowCameraNear = 100;
         light.shadowCameraFar = 600;
+
         scene.add(light);
 
         // Ground
-        material = new THREE.MeshBasicMaterial({color: 0xaaaaaa });
+        material = new THREE.MeshBasicMaterial({color: 0xffd8bf });
         geometry = new THREE.BoxGeometry(100, 1, 100);
         mesh = new THREE.Mesh(geometry, material);
         mesh.position.y -= 10;
@@ -64,8 +62,15 @@ define(function (require) {
         mesh.receiveShadow = true;
         scene.add(mesh);
 
-        CONTEXT.world = new world.World(scene);
+        // Update the global Context
+        CONTEXT.camera = camera;
+        CONTEXT.scene = scene;
+        CONTEXT.renderer = renderer;
 
+        CONTEXT.world = new World.World(scene);
+        CONTEXT.Interactor = new Interaction.interactor(Gesture, CONTEXT.world);
+
+        // Generate a few initial blocks
         CONTEXT.world.addBlock(-2, -2, -2);
         CONTEXT.world.addBlock(0, 0, 0);
 
@@ -74,25 +79,32 @@ define(function (require) {
         }
     }
 
-    init();
-
+    /**
+     * Rendering loop for Three.js
+     */
     function animate() {
         requestAnimationFrame(animate);
         CONTEXT.renderer.render(CONTEXT.scene, CONTEXT.camera);
     }
 
-    var callback = function (event) {
-        console.log(event);
-    }
+    init();
 
-    CONTEXT.Interactor = new Interaction.interactor(Gesture, CONTEXT.world);
-
-    // LEAP LOOP
+    /**
+     * The Leap loop:
+     * - hand events -> interactor.hand_handler
+     */
     Leap.loop({background: true}, {
         hand: CONTEXT.Interactor.hand_handler,
     });
 
-// HAND RIGS
+    /**
+     * Use the RiggedHand Plugin to render the hands
+     * - Use the context we created to render the system
+     * - Change the model when pinching (may be useful later)
+     * - Start the three.js loop (animate)
+     *
+     * @param controller
+     */
     visualizeHand = function (controller) {
         controller.use('riggedHand', {
             scale: 1,
