@@ -10,7 +10,6 @@ define(function () {
         this.event_handler = function (event) {
             if (event.name == "pinch") {
                 var hand = event.source;
-
                 var handMesh = hand.data('riggedHand.mesh');
                 var thumbPosition = new THREE.Vector3(0, 0, 0);
                 handMesh.scenePosition(hand.thumb.tipPosition, thumbPosition);
@@ -19,6 +18,18 @@ define(function () {
 
                 if (block) {
                     block.material.color.setHex(0xEE00EE);
+                }
+            }
+            if (event.name == "unpinch") {
+                var hand = event.source;
+                var handMesh = hand.data('riggedHand.mesh');
+                var thumbPosition = new THREE.Vector3(0, 0, 0);
+                handMesh.scenePosition(hand.thumb.tipPosition, thumbPosition);
+
+                var block = world.getBlockAt(thumbPosition, 5);
+
+                if (block) {
+                    block.material.color.setHex(0x6600EE);
                 }
             }
         }
