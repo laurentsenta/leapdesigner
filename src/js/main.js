@@ -1,21 +1,29 @@
-define(function (required) {
+define(function (require) {
+
+    var Gesture = require('./gesture');
+    var Interaction = require('./interaction');
+
     CONTEXT = {};
     CONTEXT.screen = document.getElementById('leap-designer');
     CONTEXT.width = 800;
     CONTEXT.height = 600;
 
+    var world = require('./world');
+
     var cube;
     var attached = true;
 
+    // INIT CONTEXT
     function init() {
         var scene = new THREE.Scene();
         var camera = new THREE.PerspectiveCamera(45, CONTEXT.width / CONTEXT.height, 1, 1000);
+        var renderer = new THREE.WebGLRenderer();
 
         camera.position.fromArray([0, 6, 30]);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
+
         scene.add(camera);
 
-        var renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(0x000000, 0);
         renderer.setSize(CONTEXT.width, CONTEXT.height);
 
@@ -25,47 +33,65 @@ define(function (required) {
         CONTEXT.camera = camera;
         CONTEXT.scene = scene;
         CONTEXT.renderer = renderer;
+
+        // Create context with lights, etc
+        camera.position.set(-8, 8, 20);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+        renderer.shadowMapEnabled = true;
+
+        light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(0, 500, 0);
+        light.castShadow = true;
+        light.shadowMapWidth = 2048;
+        light.shadowMapHeight = 2048;
+        var d = 200;
+        light.shadowCameraLeft = -d;
+        light.shadowCameraRight = d;
+        light.shadowCameraTop = d * 2;
+        light.shadowCameraBottom = -d * 2;
+
+        light.shadowCameraNear = 100;
+        light.shadowCameraFar = 600;
+        scene.add(light);
+
+        // Ground
+        material = new THREE.MeshBasicMaterial({color: 0xaaaaaa });
+        geometry = new THREE.BoxGeometry(100, 1, 100);
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.y -= 10;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        scene.add(mesh);
+
+        CONTEXT.world = new world.World(scene);
+
+        CONTEXT.world.addBlock(0, 0, 0);
+        CONTEXT.world.addBlock(-2, -2, -2);
     }
 
     init();
-
 
     function animate() {
         requestAnimationFrame(animate);
         CONTEXT.renderer.render(CONTEXT.scene, CONTEXT.camera);
     }
 
-    // Set up the controller:
+    var callback = function (event) {
+        console.log(event);
+    }
+
+    CONTEXT.Interactor = new Interaction.interactor(Gesture, CONTEXT.world);
+
+    // LEAP LOOP
     Leap.loop({background: true}, {
-        hand: function (hand) {
-            console.log(hand);
-
-            if (hand.pinchStrength.toPrecision(2) > 0.8) {
-                var handMesh = hand.data('riggedHand.mesh');
-
-                var thumbPosition = new THREE.Vector3(0, 0, 0);
-                handMesh.scenePosition(hand.thumb.tipPosition, thumbPosition);
-
-                if (thumbPosition.distanceTo(cube.position) < 2) {
-                    attached = true;
-                }
-                else {
-                    attached = false;
-                }
-            }
-            else {
-                attached = false;
-            }
-            if (attached) {
-                handMesh.scenePosition(hand.thumb.tipPosition, cube.position);
-            }
-        }
+        hand: CONTEXT.Interactor.hand_handler,
     });
 
+// HAND RIGS
     visualizeHand = function (controller) {
         controller.use('riggedHand', {
-            scale: 1.3,
-            positionScale: 2,
+            scale: 1,
             parent: CONTEXT.scene,
             scene: CONTEXT.scene,
             camera: CONTEXT.camera,
@@ -83,48 +109,6 @@ define(function (required) {
                 }
             }
         });
-
-        var camera = CONTEXT.camera;
-        var scene = CONTEXT.scene;
-        var renderer = CONTEXT.renderer;
-
-        camera.position.set(-8, 8, 20);
-        camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-        renderer.shadowMapEnabled = true;
-
-
-        light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(0, 500, 0);
-        light.castShadow = true;
-        light.shadowMapWidth = 2048;
-        light.shadowMapHeight = 2048;
-        var d = 200;
-        light.shadowCameraLeft = -d;
-        light.shadowCameraRight = d;
-        light.shadowCameraTop = d * 2;
-        light.shadowCameraBottom = -d * 2;
-
-        light.shadowCameraNear = 100;
-        light.shadowCameraFar = 600;
-//		light.shadowCameraVisible = true;
-        scene.add(light);
-
-        var geometry = new THREE.BoxGeometry(1, 1, 1);
-        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        cube = new THREE.Mesh(geometry, material);
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        scene.add(cube);
-
-        material = new THREE.MeshBasicMaterial({color: 0xaaaaaa });
-        geometry = new THREE.BoxGeometry(100, 1, 100);
-        mesh = new THREE.Mesh(geometry, material);
-        mesh.position.y -= 10;
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-        scene.add(mesh);
-
         animate();
     };
 

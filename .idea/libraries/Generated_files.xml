@@ -4,14 +4,17 @@
       <sourceFilesUrls>
         <item url="file://$PROJECT_DIR$/src/js/main.js" />
         <item url="file://$PROJECT_DIR$/src/js/tools.js" />
-        <item url="file://$PROJECT_DIR$/src/js/lib/leapmotionts-2.0.0+15464.js" />
+        <item url="file://$PROJECT_DIR$/src/js/world.js" />
         <item url="file://$PROJECT_DIR$/src/js/lib/leapmotionts-2.0.0+15464.js" />
       </sourceFilesUrls>
     </properties>
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/src/js/main.js" />
       <root url="file://$PROJECT_DIR$/src/js/tools.js" />
       <root url="file://$PROJECT_DIR$/src/js/lib/leapmotionts-2.0.0+15464.js" />
+      <root url="file://$PROJECT_DIR$/src/js/lib/leapmotionts-2.0.0+15464.js" />
+      <root url="file://$PROJECT_DIR$/src/js/main.js" />
+      <root url="file://$PROJECT_DIR$/src/js/tools.js" />
+      <root url="file://$PROJECT_DIR$/src/js/world.js" />
       <root url="file://$PROJECT_DIR$/src/js/lib/leapmotionts-2.0.0+15464.js" />
     </CLASSES>
     <JAVADOC />
